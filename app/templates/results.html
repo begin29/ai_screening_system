@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-semibold">Screening results</h1>
+        <a href="/" class="text-sm text-slate-600 hover:text-slate-900">&larr; Screen another batch</a>
+    </div>
+
+    <details class="bg-white border border-slate-200 rounded-lg p-4">
+        <summary class="cursor-pointer text-sm font-medium text-slate-700">Job description</summary>
+        <pre class="mt-3 whitespace-pre-wrap text-sm text-slate-700">{{ job_description }}</pre>
+    </details>
+
+    {% if response.results %}
+    <div class="overflow-x-auto bg-white border border-slate-200 rounded-lg shadow-sm">
+        <table class="min-w-full divide-y divide-slate-200">
+            <thead class="bg-slate-50">
+                <tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th class="px-4 py-3">#</th>
+                    <th class="px-4 py-3">Candidate</th>
+                    <th class="px-4 py-3">Score</th>
+                    <th class="px-4 py-3">Experience</th>
+                    <th class="px-4 py-3">Matching skills</th>
+                    <th class="px-4 py-3">Missing skills</th>
+                    <th class="px-4 py-3">Recommendation</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+                {% for result in response.results %}
+                <tr>
+                    <td class="px-4 py-3 text-slate-500">{{ loop.index }}</td>
+                    <td class="px-4 py-3 font-medium text-slate-900">{{ result.candidate_name }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5
+                                     text-xs font-medium text-slate-800">
+                            {{ result.match_score }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-slate-700">{{ result.experience }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                            {% for skill in result.matching_skills %}
+                            <span class="rounded bg-emerald-50 text-emerald-800 text-xs px-2 py-0.5">
+                                {{ skill }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                            {% for skill in result.missing_skills %}
+                            <span class="rounded bg-amber-50 text-amber-800 text-xs px-2 py-0.5">
+                                {{ skill }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        {% if result.recommendation == "Good fit" %}
+                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5
+                                     text-xs font-medium text-emerald-800">
+                            Good fit
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5
+                                     text-xs font-medium text-rose-800">
+                            Bad fit
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-slate-600">No candidates were screened.</p>
+    {% endif %}
+</div>
+{% endblock %}
